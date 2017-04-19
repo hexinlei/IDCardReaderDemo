@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:weightSum="1"
+    tools:context="com.demo.ranger.idreaderdemo.MainActivity"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_weight="0.15">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_corner_corner"
+            android:layout_weight="0.13">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_border"
+
+                android:layout_weight="6">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="1000"
+                    android:id="@+id/number"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_border"
+
+                android:layout_weight="4">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_border"
+                    android:layout_weight="2">
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:id="@+id/photo"
+                        android:layout_gravity="right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_border"
+                    android:layout_weight="10">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="何鑫磊"
+                        android:id="@+id/name"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="#0b24de">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="检查"
+                    android:id="@+id/checkResult"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="80dp"
+                    android:textStyle="bold"
+                    android:textColor="#e70909" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/shape_corner_corner"
+            android:layout_weight="0.13">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_border"
+
+                android:layout_weight="6">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="1000"
+                    android:id="@+id/number"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_border"
+
+                android:layout_weight="4">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_border"
+                    android:layout_weight="2">
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:id="@+id/photo"
+                        android:layout_gravity="right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_border"
+                    android:layout_weight="10">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="何鑫磊"
+                        android:id="@+id/name"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="#0b24de">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="检查"
+                    android:id="@+id/checkResult"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="80dp"
+                    android:textStyle="bold"
+                    android:textColor="#e70909" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:background="@drawable/shape_corner_corner"
+            android:layout_weight="0.13">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_border"
+
+                android:layout_weight="6">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="1000"
+                    android:id="@+id/number"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="18dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/shape_border"
+
+                android:layout_weight="4">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_border"
+                    android:layout_weight="2">
+
+                    <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:id="@+id/photo"
+                        android:layout_gravity="right" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/shape_border"
+                    android:layout_weight="10">
+
+                    <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="何鑫磊"
+                        android:id="@+id/name"
+                        android:layout_gravity="center_horizontal"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:textSize="20dp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:background="#0b24de">
+
+                <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:text="检查"
+                    android:id="@+id/checkResult"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="80dp"
+                    android:textStyle="bold"
+                    android:textColor="#e70909" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/shape_corner_down"
+
+        android:layout_weight="0.85">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="统计信息"
+            android:layout_weight="8"
+            android:layout_gravity="center"
+            android:autoText="false"
+            android:gravity="center_vertical|center_horizontal"
+            android:textStyle="bold"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/countInfo"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="9"
+            android:text="1000"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="放行"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="8"
+            android:textStyle="bold"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="9"
+            android:gravity="center_vertical|center_horizontal"
+            android:id="@+id/allowCount"
+            android:text="1"
+            android:textStyle="bold"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="检查"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="8"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/checkCount"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="9"
+            android:text="8"
+            android:textStyle="bold"
+            android:textSize="18dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="禁止"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="8"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/prohibitCount"
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_weight="9"
+            android:text="1"
+            android:textStyle="bold"
+            android:textSize="18dp" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

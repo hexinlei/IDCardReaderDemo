@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/showLines_title"
+        android:entryValues="@array/showLines_values"
+        android:key="showLines"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_show_lines_title" />
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/show_setting_title"
+        android:entryValues="@array/showLines_values"
+        android:key="showSetting"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null"
+        android:title="@string/pref_show_setting"/>
+
+</PreferenceScreen>

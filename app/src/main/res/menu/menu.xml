@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+    android:id="@+id/action_start"
+    android:orderInCategory="100"
+    android:title="@string/start"/>
+
+    <item
+        android:id="@+id/action_close"
+        android:orderInCategory="100"
+        android:title="@string/close"/>
+
+    <item
+        android:id="@+id/action_mockData"
+        android:orderInCategory="100"
+        android:title="@string/mockData"/>
+
+    <item
+        android:id="@+id/action_exit"
+        android:orderInCategory="100"
+        android:title="@string/exit"/>
+
+    <item
+        android:id="@+id/action_setting"
+        android:orderInCategory="100"
+        android:title="@string/setting"/>
+
+
+
+</menu>
