@@ -171,7 +171,7 @@ public class IDCardReaderService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         boolean mockDataEnable = intent.getBooleanExtra("mockDataEnable",false);
         if (mockDataEnable){
-            mockDataMap = new HashMap<>();
+            mockDataMap = new HashMap<String,String>();
             ReadFileDataUtil.readMockData(mockDataMap);
         }
         return super.onStartCommand(intent, flags, startId);

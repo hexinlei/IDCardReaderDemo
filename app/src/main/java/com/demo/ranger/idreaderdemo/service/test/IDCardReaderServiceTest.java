@@ -12,11 +12,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.demo.ranger.idreaderdemo.MainActivity;
+import com.demo.ranger.idreaderdemo.service.IDCardConnectService;
+import com.demo.ranger.idreaderdemo.util.ConventerUtil;
+import com.demo.ranger.idreaderdemo.util.LogUtil;
 import com.ranger.aidl.IDCardInfoData;
 import com.ranger.aidl.IDManager;
 import com.zkteco.android.biometric.core.device.ParameterHelper;
 import com.zkteco.android.biometric.core.device.TransportType;
 import com.zkteco.android.biometric.module.idcard.IDCardReaderFactory;
+import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,14 +44,19 @@ public class IDCardReaderServiceTest extends Service{
 
     private int count = 0;
 
-    private static final int VID = 1024;    //IDR VID
-    private static final int PID = 50010;     //IDR PID
-
     private static final int index = 20;
+
+    private IDCardConnectService connect;
 
     private List<IDCardInfoData> idCardInfoDatas;
 
+    private IDCardInfo idCardInfo;
+
     private Intent intent = new Intent("android.intent.action.AIDLService");
+
+    private boolean mBound = false;
+
+    private long timesRefash = 0;
 
     //AIDL
     private IDManager idManager;
@@ -56,12 +65,13 @@ public class IDCardReaderServiceTest extends Service{
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("ServiceConnection", "onServiceConnected() called");
             idManager = IDManager.Stub.asInterface(service);
-
+            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i("ServiceConnection", "onServiceDisconnected() called");
+            mBound = false;
         }
     };
 
@@ -79,25 +89,19 @@ public class IDCardReaderServiceTest extends Service{
             public void run() {
                 while (!threadDisabe){
                     try {
-                        Thread.sleep(times);
+                        Thread.sleep(times/2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
 
-                    //mock数据
-                    try{
-                        if (count<10){
-                            int photoLength = 10;
-                            byte photo[] = new byte[0];
-                            String name = "test1"+count;
-                            String id = "111111"+count;
-                            IDCardInfoData idCardInfoData = new IDCardInfoData(photoLength,photo,name,id);
-                            idCardInfoDatas.add(idCardInfoData);
-                        }
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+                    idCardInfo = connect.getIDCardInfo();
 
+                    if (null!=idCardInfo){
+
+                        ConventerUtil.conventerIDCardInfoData(idCardInfoDatas,idCardInfo);
+
+
+                    }
 
                     execute();
                     count++;
@@ -110,11 +114,16 @@ public class IDCardReaderServiceTest extends Service{
 
     }
 
+    /**
+     * 初始化服务
+     */
     private void init() {
-        idCardInfoDatas = new ArrayList<>();
+        idCardInfoDatas = new ArrayList<IDCardInfoData>();
+        intent.setPackage("com.demo.ranger.idreaderdemo");
         boolean flag = bindService(intent, scon, Context.BIND_AUTO_CREATE);
-        Toast.makeText(getApplicationContext(), "" + flag, Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(getApplicationContext(), "启动数据校验服务:" + flag, Toast.LENGTH_SHORT).show();
+        connect = new IDCardConnectService(getApplicationContext(),times);
+        Toast.makeText(getApplicationContext(), "启动身份获取服务", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -128,7 +137,13 @@ public class IDCardReaderServiceTest extends Service{
 
                     String result = idManager.getCheckResult(data);
                     Intent intentForward = new Intent();
-                    intentForward.putExtra("name", result);
+
+                    intentForward.putExtra("name", data.getName());
+                    intentForward.putExtra("id", data.getId());
+                    intentForward.putExtra("count", count);
+                    intentForward.putExtra("photo", data.getPhoto());
+                    intentForward.putExtra("checkResult",result);
+
                     intentForward.setAction("android.intent.action.ClientTestService");
                     sendBroadcast(intentForward);
                     if ("success".equals(result)){
@@ -136,22 +151,29 @@ public class IDCardReaderServiceTest extends Service{
                     }
                 }
             }else {
-                Intent intentForward = new Intent();
-                intentForward.putExtra("name", "无数据");
-                intentForward.setAction("android.intent.action.ClientTestService");
-                sendBroadcast(intentForward);
+
+                if (timesRefash>10){
+                    Intent intentForward = new Intent();
+                    intentForward.putExtra("name", "无数据");
+                    intentForward.setAction("android.intent.action.ClientTestService");
+                    timesRefash = 0;
+                    sendBroadcast(intentForward);
+                }else {
+                    timesRefash++;
+                }
             }
 
-
         } catch (RemoteException e) {
-            e.printStackTrace();
+            LogUtil.e(this.getClass().getName(),e);
         }
     }
 
 
     @Override
     public void onDestroy() {
+        if (mBound){
+            unbindService(scon);
+        }
         super.onDestroy();
-        unbindService(scon);
     }
 }

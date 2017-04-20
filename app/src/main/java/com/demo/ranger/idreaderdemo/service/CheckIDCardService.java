@@ -21,23 +21,23 @@ public class CheckIDCardService {
     public static CheckTypeEnum checkMockData(String id,Map<String,String> map){
         String idNum = id.trim();
         CheckTypeEnum checkTypeEnum = null;
-        if (map.containsKey(idNum)){
-            String checkResult = map.get(idNum);
-            LogUtil.d("CheckIDCardService checkMockData map",checkResult);
-
-            switch (checkResult){
-                case "SECURATY":
-                    checkTypeEnum = CheckTypeEnum.SECURATYEnum;
-                    break;
-                case "SUCCESS":
-                    checkTypeEnum = CheckTypeEnum.SUCCESSEnum;
-                    break;
-                case "FAIL":
-                    checkTypeEnum = CheckTypeEnum.FAILEnum;
-                    break;
-            }
-            LogUtil.d("CheckIDCardService checkMockData",checkTypeEnum.getValue());
-        }
+//        if (map.containsKey(idNum)){
+//            String checkResult = map.get(idNum);
+//            LogUtil.d("CheckIDCardService checkMockData map",checkResult);
+//
+//            switch (checkResult){
+//                case "SECURATY":
+//                    checkTypeEnum = CheckTypeEnum.SECURATYEnum;
+//                    break;
+//                case "SUCCESS":
+//                    checkTypeEnum = CheckTypeEnum.SUCCESSEnum;
+//                    break;
+//                case "FAIL":
+//                    checkTypeEnum = CheckTypeEnum.FAILEnum;
+//                    break;
+//            }
+//            LogUtil.d("CheckIDCardService checkMockData",checkTypeEnum.getValue());
+//        }
         return checkTypeEnum;
     }
 

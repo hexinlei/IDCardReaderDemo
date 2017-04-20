@@ -29,14 +29,14 @@ public enum CheckTypeEnum {
     private static String FAIL_TEXT= "禁止";
 
 
-    public static Map<String,String> valuesMap = new HashMap<>();
+    public static Map<String,String> valuesMap = new HashMap<String,String>();
     static {
         valuesMap.put("SECURATY",SECURATY_VOICE);
         valuesMap.put("SUCCESS",SUCCESS_VOICE);
         valuesMap.put("FAIL",FAIL_VOICE);
     }
 
-    public static Map<String,String> textMap = new HashMap<>();
+    public static Map<String,String> textMap = new HashMap<String,String>();
     static {
         textMap.put("SECURATY",SECURATY_TEXT);
         textMap.put("SUCCESS",SUCCESS_TEXT);

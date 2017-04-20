@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pre_reader_times">
+        <EditTextPreference
+            android:key="reader_times_preference"
+            android:title="@string/pre_reader_times_title"
+            android:summary="@string/pre_reader_times_title"
+            android:dialogTitle="@string/pre_reader_times_title" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -22,5 +22,25 @@
         android:title="@string/pref_header_general"
         android:summary="@string/pref_header_general" >
     </header>
+
+    <header
+        android:fragment="com.demo.ranger.idreaderdemo.fragment.ReaderFragment"
+        android:title="@string/pre_header_reader_setting"
+        android:summary="@string/pre_header_reader_setting" >
+    </header>
+
+    <header
+        android:fragment="com.demo.ranger.idreaderdemo.fragment.VoiceFragment"
+        android:title="@string/pre_header_voice_setting"
+        android:summary="@string/pre_header_voice_setting" >
+    </header>
+
+    <header
+        android:fragment="com.demo.ranger.idreaderdemo.fragment.BackgroundFragment"
+        android:title="@string/pre_background_enable"
+        android:summary="@string/pre_background_enable" >
+    </header>
+
+
 	
 </preference-headers>

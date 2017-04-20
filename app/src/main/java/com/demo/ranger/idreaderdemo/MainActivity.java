@@ -9,24 +9,22 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.ranger.idreaderdemo.activity.SettingsActivity;
-import com.demo.ranger.idreaderdemo.service.IDCardReaderService;
 import com.demo.ranger.idreaderdemo.util.LogUtil;
-import com.ranger.aidl.IDCardInfoData;
 import com.ranger.aidl.IDManager;
 import com.zkteco.android.IDReader.IDPhotoHelper;
 import com.zkteco.android.IDReader.WLTService;
+
+import Invs.Termb;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private MyReceiver receiver = null;
     private boolean mockDataEnable = false;
 
+    private boolean mBound = false;
 
 
     //控件
@@ -41,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView photo;
 
 
-    Intent intent = new Intent("android.intent.action.ClientTestService");
+    Intent intent = null;
 
 
     //AIDL
@@ -51,12 +50,13 @@ public class MainActivity extends AppCompatActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             Log.i("ServiceConnection", "onServiceConnected() called");
             idManager = IDManager.Stub.asInterface(service);
-
+            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.i("ServiceConnection", "onServiceDisconnected() called");
+            mBound = false;
         }
     };
 
@@ -73,48 +73,14 @@ public class MainActivity extends AppCompatActivity {
             checkCount = (TextView) findViewById(R.id.checkCount);
             prohibitCount = (TextView) findViewById(R.id.prohibitCount);
             checkResult = (TextView) findViewById(R.id.checkResult);
-            //startService();
+
+
+            intent = new Intent("android.intent.action.ClientTestService");
+
             receiver=new MyReceiver();
             IntentFilter filter=new IntentFilter();
             filter.addAction("android.intent.action.ClientTestService");
             MainActivity.this.registerReceiver(receiver, filter);
-
-//            //按钮事件
-//            exit.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    exit();
-//                }
-//            });
-//
-//            //
-//            setting.setOnClickListener(new View.OnClickListener(){
-//
-//                @Override
-//                public void onClick(View v) {
-//                    startService(intent);
-//                    Toast.makeText(getApplicationContext(),"启动成功",Toast.LENGTH_SHORT).show();
-//
-//
-//                }
-//            });
-//
-//            checkInfo.setOnClickListener(new View.OnClickListener(){
-//
-//                @Override
-//                public void onClick(View v) {
-//                    byte photo[] = new byte[0];
-//                    IDCardInfoData data = new IDCardInfoData(0,photo,"测试","11111111");
-//                    try {
-//                        String result = idManager.getCheckResult(data);
-//                        Toast.makeText(getApplicationContext(),result,Toast.LENGTH_SHORT).show();
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            });
-
-
         }catch (Exception e){
             LogUtil.e("Exception", e);
         }
@@ -122,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        stopService();
         super.onDestroy();
     }
 
@@ -141,13 +108,11 @@ public class MainActivity extends AppCompatActivity {
         switch (id){
             case R.id.action_start:
                 try{
-//                    stopService();
-//                    startService();
-                    startServiceGet();
+                    startService();
                 }catch (Exception e){
                     LogUtil.e("start service",e);
                 }
-                Toast.makeText(this,"身份识别服务已经开启",Toast.LENGTH_SHORT);
+                Toast.makeText(this,"身份识别服务已经开启",Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.action_close:
@@ -156,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 }catch (Exception e){
                     LogUtil.e("stop service",e);
                 }
-                Toast.makeText(this,"身份识别服务已经关闭",Toast.LENGTH_SHORT);
+                Toast.makeText(this,"身份识别服务已经关闭",Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.action_mockData:
@@ -175,17 +140,11 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * 启动刷卡服务
-     */
+
     private void startService(){
-        Intent intentService = new Intent(MainActivity.this, IDCardReaderService.class);
-        intentService.putExtra("mockDataEnable",mockDataEnable);
-        startService(intentService);
-    }
-
-    private void startServiceGet(){
-
+        intent.setPackage("com.demo.ranger.idreaderdemo");
+        boolean ret = bindService(intent, scon, Context.BIND_AUTO_CREATE);
+        Toast.makeText(this,"服务开启:"+ret,Toast.LENGTH_SHORT).show();
     }
 
 
@@ -193,21 +152,11 @@ public class MainActivity extends AppCompatActivity {
      * 终止刷卡服务
      */
     private void stopService(){
-        stopService(new Intent(MainActivity.this, IDCardReaderService.class));
-    }
-
-    /**
-     * 退出
-     */
-    private void exit(){
-        mockDataEnable = false;
-        stopService();
+        if (mBound){
+            unbindService(scon);
+        }
         unregisterReceiver(receiver);
-        stopService(intent);
-        finish();
     }
-
-
 
     class MyReceiver extends BroadcastReceiver{
 
@@ -229,13 +178,24 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap bitmap = null;
 
                 if (null!= photo){
+                    LogUtil.e("photoLength", photo.length);
+//                    Termb.Wlt2Bmp(photo);
 
+
+//                    bitmap = IDPhotoHelper.Bgr2Bitmap(photo);
                     byte[] buf = new byte[WLTService.imgLength];
 
                     if(1 == WLTService.wlt2Bmp(photo, buf))
                     {
                         bitmap = IDPhotoHelper.Bgr2Bitmap(buf);
                     }
+
+//                    byte[] buf = Termb.Wlt2Bmp(photo);
+                    LogUtil.e("Conventer photoLength",buf.length);
+//                    bitmap = IDPhotoHelper.Bgr2Bitmap(buf);
+
+
+
 
                 }
                 MainActivity.this.number.setText(String.valueOf(counts));
@@ -252,6 +212,8 @@ public class MainActivity extends AppCompatActivity {
                 LogUtil.e("Exception", e);
             }
         }
+
+
     }
 
 

@@ -22,7 +22,7 @@ public class AIDLService extends Service{
         public String getCheckResult(IDCardInfoData info) throws RemoteException {
 
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

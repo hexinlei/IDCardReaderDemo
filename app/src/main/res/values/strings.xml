@@ -44,6 +44,24 @@
         <item>-1</item>
     </string-array>
 
+    <string name="pre_header_reader_setting">读卡设置</string>
+    <string name="pre_reader_times">读卡时间</string>
+    <string name="pre_reader_times_title">读卡时间设置</string>
 
+    <string name="pre_header_voice_setting">声音设置</string>
+    <string name="pre_voice_setting">语音播报</string>
+    <string name="pre_voide_background">待机画面</string>
+
+    <string name="pre_background_enable">启用待机画面</string>
+    <string name="pre_background_enable_title">是否启用待机画面</string>
+    <string name="pre_background_action">待机选择</string>
+    <string-array name="pre_background_action_title">
+        <item>视频</item>
+        <item>音频</item>
+    </string-array>
+    <string-array name="pre_background_action_value">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
 
 </resources>
