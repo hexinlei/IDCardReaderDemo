@@ -41,6 +41,7 @@ public enum CheckTypeEnum {
         textMap.put("SECURATY",SECURATY_TEXT);
         textMap.put("SUCCESS",SUCCESS_TEXT);
         textMap.put("FAIL",FAIL_TEXT);
+        textMap.put("-90",SUCCESS_TEXT);
     }
 
 

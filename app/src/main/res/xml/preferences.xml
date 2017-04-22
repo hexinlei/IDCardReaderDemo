@@ -12,7 +12,7 @@
     <ListPreference
         android:defaultValue="1"
         android:entries="@array/show_setting_title"
-        android:entryValues="@array/showLines_values"
+        android:entryValues="@array/show_setting_values"
         android:key="showSetting"
         android:negativeButtonText="@null"
         android:positiveButtonText="@null"

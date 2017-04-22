@@ -7,11 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.ranger.idreaderdemo.activity.SettingsActivity;
+import com.demo.ranger.idreaderdemo.constans.CheckTypeEnum;
 import com.demo.ranger.idreaderdemo.data.RequestData;
 import com.demo.ranger.idreaderdemo.data.ResponseData;
 import com.demo.ranger.idreaderdemo.util.GsonUtil;
@@ -32,14 +35,11 @@ import com.ranger.aidl.IDManager;
 import com.zkteco.android.IDReader.IDPhotoHelper;
 import com.zkteco.android.IDReader.WLTService;
 
-
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.lang.reflect.Type;
-
-import Invs.Termb;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
     private ResponseData responseData;
     ProgressDialog waitingDialog;
     private String status="0";
+
+    private SharedPreferences preferences;
 
     //AIDL
     private IDManager idManager;
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             IntentFilter filter=new IntentFilter();
             filter.addAction("android.intent.action.ClientTestService");
             MainActivity.this.registerReceiver(receiver, filter);
+            preferences = PreferenceManager.getDefaultSharedPreferences(this);
         }catch (Exception e){
             LogUtil.e("Exception", e);
         }
@@ -230,11 +233,25 @@ public class MainActivity extends AppCompatActivity {
                             }.getType();
                             responseData = gson.fromJson(responseInfo, type);
                             status = responseData.getMessage();
-                            if (status.equals("-90")) {
-                                MainActivity.this.checkResult.setText("123123123");
-                            } else {
-                                MainActivity.this.checkResult.setText("5454545454");
+                            String msgInfo = responseData.getStatus();
+                            String resultMsg = null;
+
+                            String showSetting = preferences.getString("showSetting","2");
+
+                            if (showSetting.equals("1")){
+                                //1.原文输出
+                                resultMsg = msgInfo;
+                            }else if (showSetting.equals("2")){
+                                //2.自定义输出
+                                if (CheckTypeEnum.textMap.containsKey(status)){
+                                    resultMsg = CheckTypeEnum.textMap.get(status);
+                                }else {
+                                    resultMsg =CheckTypeEnum.textMap.get("FAIL");
+                                }
                             }
+
+                            MainActivity.this.checkResult.setText(resultMsg);
+
                         }
                     };
                 }
@@ -252,24 +269,13 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap bitmap = null;
 
                 if (null!= photo){
-                    LogUtil.e("photoLength", photo.length);
-//                    Termb.Wlt2Bmp(photo);
 
-
-//                    bitmap = IDPhotoHelper.Bgr2Bitmap(photo);
                     byte[] buf = new byte[WLTService.imgLength];
 
                     if(1 == WLTService.wlt2Bmp(photo, buf))
                     {
                         bitmap = IDPhotoHelper.Bgr2Bitmap(buf);
                     }
-
-//                    byte[] buf = Termb.Wlt2Bmp(photo);
-                    LogUtil.e("Conventer photoLength",buf.length);
-//                    bitmap = IDPhotoHelper.Bgr2Bitmap(buf);
-
-
-
 
                 }
                 MainActivity.this.number.setText(String.valueOf(counts));
