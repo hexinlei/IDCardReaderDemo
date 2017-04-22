@@ -1,5 +1,6 @@
 package com.demo.ranger.idreaderdemo;
 
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -8,7 +9,9 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -19,10 +22,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demo.ranger.idreaderdemo.activity.SettingsActivity;
+import com.demo.ranger.idreaderdemo.data.RequestData;
+import com.demo.ranger.idreaderdemo.data.ResponseData;
+import com.demo.ranger.idreaderdemo.util.GsonUtil;
 import com.demo.ranger.idreaderdemo.util.LogUtil;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ranger.aidl.IDManager;
 import com.zkteco.android.IDReader.IDPhotoHelper;
 import com.zkteco.android.IDReader.WLTService;
+
+
+import org.xutils.common.Callback;
+import org.xutils.http.RequestParams;
+import org.xutils.x;
+
+import java.lang.reflect.Type;
 
 import Invs.Termb;
 
@@ -42,6 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
     Intent intent = null;
 
+    private String responseInfo;
+    private Handler handler;
+    private ResponseData responseData;
+    ProgressDialog waitingDialog;
+    private String status="0";
 
     //AIDL
     private IDManager idManager;
@@ -65,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         try{
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main_1);
-
+            x.Ext.init(getApplication());
             number = (TextView) findViewById(R.id.number);
             name = (TextView) findViewById(R.id.name);
             photo = (ImageView) findViewById(R.id.photo);
@@ -74,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
             prohibitCount = (TextView) findViewById(R.id.prohibitCount);
             checkResult = (TextView) findViewById(R.id.checkResult);
 
-
+            waitingDialog=
+                    new ProgressDialog(MainActivity.this);
             intent = new Intent("android.intent.action.ClientTestService");
 
             receiver=new MyReceiver();
@@ -158,6 +179,38 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
+    public  void getCartInfo(String id) {
+        RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/redList/personRedList");
+        final RequestData requestData= new RequestData();
+        requestData.setDeviceCode("1231231231");
+        requestData.setCardNo(id);
+        String json= GsonUtil.toJson(requestData);//上传数据
+        requestParams.setAsJsonContent(true);
+        requestParams.setBodyContent(json);
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Message msg = Message.obtain();
+                msg.obj = result;
+                handler.sendMessage(msg);
+                waitingDialog.dismiss();
+            }
+
+            @Override
+            public void onFinished() {
+                //dia.dismiss();//加载完成
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+        });
+    }
+
     class MyReceiver extends BroadcastReceiver{
 
         @Override
@@ -165,6 +218,27 @@ public class MainActivity extends AppCompatActivity {
             try{
                 Bundle bundle = intent.getExtras();
                 String id = bundle.getString("id");
+                if (null!=id) {
+                    getCartInfo(id);
+                    handler = new Handler() {
+                        @Override
+                        public void handleMessage(Message msg) {
+                            super.handleMessage(msg);
+                            responseInfo = (String) msg.obj;
+                            Gson gson = new Gson();
+                            Type type = new TypeToken<ResponseData>() {
+                            }.getType();
+                            responseData = gson.fromJson(responseInfo, type);
+                            status = responseData.getMessage();
+                            if (status.equals("-90")) {
+                                MainActivity.this.checkResult.setText("123123123");
+                            } else {
+                                MainActivity.this.checkResult.setText("5454545454");
+                            }
+                        }
+                    };
+                }
+
                 String name = bundle.getString("name");
                 int counts = bundle.getInt("count");
 
