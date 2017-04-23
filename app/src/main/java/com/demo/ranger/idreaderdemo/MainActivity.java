@@ -29,6 +29,7 @@ import com.demo.ranger.idreaderdemo.data.RequestData;
 import com.demo.ranger.idreaderdemo.data.ResponseData;
 import com.demo.ranger.idreaderdemo.util.GsonUtil;
 import com.demo.ranger.idreaderdemo.util.LogUtil;
+import com.demo.ranger.idreaderdemo.util.TtsUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ranger.aidl.IDManager;
@@ -185,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
     public  void getCartInfo(String id) {
         RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/redList/personRedList");
         final RequestData requestData= new RequestData();
-        requestData.setDeviceCode("1231231231");
+        requestData.setDeviceCode("7650100100000001");
         requestData.setCardNo(id);
         String json= GsonUtil.toJson(requestData);//上传数据
         requestParams.setAsJsonContent(true);
@@ -232,10 +233,10 @@ public class MainActivity extends AppCompatActivity {
                             Type type = new TypeToken<ResponseData>() {
                             }.getType();
                             responseData = gson.fromJson(responseInfo, type);
-                            status = responseData.getMessage();
-                            String msgInfo = responseData.getStatus();
+                            status = responseData.getStatus();
+                            String msgInfo = responseData.getMessage();
                             String resultMsg = null;
-
+                            LogUtil.e("responseData",responseData.toString());
                             String showSetting = preferences.getString("showSetting","2");
 
                             if (showSetting.equals("1")){
@@ -243,10 +244,13 @@ public class MainActivity extends AppCompatActivity {
                                 resultMsg = msgInfo;
                             }else if (showSetting.equals("2")){
                                 //2.自定义输出
+                                LogUtil.e("status--------",status);
                                 if (CheckTypeEnum.textMap.containsKey(status)){
                                     resultMsg = CheckTypeEnum.textMap.get(status);
+                                    TtsUtil.read(getApplicationContext(),CheckTypeEnum.valuesMap.get(status));
                                 }else {
                                     resultMsg =CheckTypeEnum.textMap.get("FAIL");
+                                    TtsUtil.read(getApplicationContext(),CheckTypeEnum.valuesMap.get("FAIL"));
                                 }
                             }
 
@@ -258,11 +262,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String name = bundle.getString("name");
                 int counts = bundle.getInt("count");
-
-                Toast.makeText(getApplicationContext(),name,Toast.LENGTH_SHORT).show();
-
-                String checkResult = bundle.getString("checkResult");
-
 
                 byte photo[] = bundle.getByteArray("photo");
 
@@ -280,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 MainActivity.this.number.setText(String.valueOf(counts));
                 MainActivity.this.name.setText(name);
-                MainActivity.this.checkResult.setText(checkResult != null ? checkResult:id);
+                MainActivity.this.checkResult.setText(null);
                 if (null != bitmap){
                     MainActivity.this.photo.setImageBitmap(bitmap);
                     MainActivity.this.photo.setVisibility(View.VISIBLE);
