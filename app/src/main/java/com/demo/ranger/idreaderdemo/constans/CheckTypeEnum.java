@@ -20,7 +20,8 @@ public enum CheckTypeEnum {
     private String FAIL = "FAIL";
 
 
-    private static String FAIL_SUCCESS = "0";
+    private static String FAIL_CHECK = "0";
+    private static String SUCCESS_CHECK = "1";
 
 
     private static String SECURATY_VOICE = "请接受安检";
@@ -36,7 +37,8 @@ public enum CheckTypeEnum {
         valuesMap.put("SECURATY",SECURATY_VOICE);
         valuesMap.put("SUCCESS",SUCCESS_VOICE);
         valuesMap.put("FAIL",FAIL_VOICE);
-        valuesMap.put(FAIL_SUCCESS,FAIL_VOICE);
+        valuesMap.put(FAIL_CHECK,FAIL_VOICE);
+        valuesMap.put(SUCCESS_CHECK,SUCCESS_VOICE);
     }
 
     public static Map<String,String> textMap = new HashMap<String,String>();
@@ -45,7 +47,8 @@ public enum CheckTypeEnum {
         textMap.put("SUCCESS",SUCCESS_TEXT);
         textMap.put("FAIL",FAIL_TEXT);
         textMap.put("-90",SUCCESS_TEXT);
-        textMap.put(FAIL_SUCCESS,FAIL_TEXT);
+        textMap.put(FAIL_CHECK,FAIL_TEXT);
+        textMap.put(SUCCESS_CHECK,SUCCESS_TEXT);
     }
 
 

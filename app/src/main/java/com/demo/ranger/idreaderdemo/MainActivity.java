@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                             Type type = new TypeToken<ResponseData>() {
                             }.getType();
                             responseData = gson.fromJson(responseInfo, type);
-                            status = responseData.getStatus();
+                            status = responseData.getIsRedList();
                             String msgInfo = responseData.getMessage();
                             String resultMsg = null;
                             LogUtil.e("responseData",responseData.toString());
