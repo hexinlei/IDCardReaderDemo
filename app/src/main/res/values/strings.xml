@@ -45,6 +45,11 @@
     </string-array>
 
     <string name="pre_header_reader_setting">读卡设置</string>
+    <string name="pre_reader_server">后台服务器设置</string>
+    <string name="pre_reader_server_title">服务器地址</string>
+    <string name="pre_reader_server_ipdefault">124.117.209.133</string>
+    <string name="pre_reader_server_port">29092</string>
+    <string name="pre_reader_serverport_title">端口</string>
     <string name="pre_reader_times">读卡时间</string>
     <string name="pre_reader_times_title">读卡时间设置</string>
 

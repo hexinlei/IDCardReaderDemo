@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void getCartInfo(String id) {
-        RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/redList/personRedList");
+        RequestParams requestParams = new RequestParams(getUrl());
         final RequestData requestData= new RequestData();
         requestData.setDeviceCode("7650100100000001");
         requestData.setCardNo(id);
@@ -213,6 +213,14 @@ public class MainActivity extends AppCompatActivity {
             public void onError(Throwable ex, boolean isOnCallback) {
             }
         });
+    }
+
+    private String getUrl()
+    {
+        String ip = preferences.getString("pre_reader_server","124.117.209.133");
+        String port = preferences.getString("pre_reader_serverport","29092");
+        return "http://"+ip+":"+port+"/verificationInterface/redList/personRedList";
+
     }
 
     class MyReceiver extends BroadcastReceiver{

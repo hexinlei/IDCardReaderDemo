@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+            android:title="@string/pre_reader_server">
+
+        <EditTextPreference
+                android:defaultValue="@string/pre_reader_server_ipdefault"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pre_reader_server_title"
+                android:key="pre_reader_server"/>
+        <EditTextPreference
+                android:defaultValue="@string/pre_reader_server_port"
+                android:selectAllOnFocus="true"
+                android:singleLine="true"
+                android:title="@string/pre_reader_serverport_title"
+                android:key="pre_reader_serverport"/>
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pre_reader_times">
         <EditTextPreference
             android:key="reader_times_preference"
