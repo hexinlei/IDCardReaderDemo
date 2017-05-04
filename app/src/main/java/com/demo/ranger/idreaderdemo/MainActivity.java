@@ -27,6 +27,8 @@ import com.demo.ranger.idreaderdemo.activity.SettingsActivity;
 import com.demo.ranger.idreaderdemo.constans.CheckTypeEnum;
 import com.demo.ranger.idreaderdemo.data.RequestData;
 import com.demo.ranger.idreaderdemo.data.ResponseData;
+import com.demo.ranger.idreaderdemo.entity.ResultInfoTable;
+import com.demo.ranger.idreaderdemo.service.DBManagerService;
 import com.demo.ranger.idreaderdemo.util.GsonUtil;
 import com.demo.ranger.idreaderdemo.util.LogUtil;
 import com.demo.ranger.idreaderdemo.util.TtsUtil;
@@ -41,6 +43,7 @@ import org.xutils.http.RequestParams;
 import org.xutils.x;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -65,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
     private String status="0";
 
     private SharedPreferences preferences;
+
+    private DBManagerService managerService;
 
     //AIDL
     private IDManager idManager;
@@ -106,6 +111,10 @@ public class MainActivity extends AppCompatActivity {
             filter.addAction("android.intent.action.ClientTestService");
             MainActivity.this.registerReceiver(receiver, filter);
             preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            managerService = new DBManagerService();
+            managerService.delete(preferences.getInt("deleteDays",30));
+
+
         }catch (Exception e){
             LogUtil.e("Exception", e);
         }
@@ -223,6 +232,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * 保存检查结果
+     */
+    private void saveResult(ResponseData responseData){
+        String status = responseData.getIsRedList();
+        ResultInfoTable infoTable = new ResultInfoTable();
+        switch (status){
+            case "0":
+                infoTable.setCheckType("forbid");
+                infoTable.setCreateTime(new Date());
+                managerService.insert(infoTable);
+                break;
+            case "1":
+                infoTable.setCheckType("pass");
+                infoTable.setCreateTime(new Date());
+                managerService.insert(infoTable);
+                break;
+            case "2":
+                break;
+        }
+    }
+
     class MyReceiver extends BroadcastReceiver{
 
         @Override
@@ -246,6 +277,11 @@ public class MainActivity extends AppCompatActivity {
                             String resultMsg = null;
                             LogUtil.e("responseData",responseData.toString());
                             String showSetting = preferences.getString("showSetting","2");
+
+                            //保存识别结果
+                            saveResult(responseData);
+
+
 
                             if (showSetting.equals("1")){
                                 //1.原文输出
