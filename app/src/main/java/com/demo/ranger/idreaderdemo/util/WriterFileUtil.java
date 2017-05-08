@@ -1,10 +1,9 @@
 package com.demo.ranger.idreaderdemo.util;
 
+import android.graphics.Bitmap;
 import com.demo.ranger.idreaderdemo.constans.IDCardReaderConstans;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -51,5 +50,25 @@ public class WriterFileUtil {
             LogUtil.e("error",e);
         }
     }
-
+    /** 保存方法 */
+    public static  void saveBitmap(Bitmap bm,String card) {
+        File f = new File( IDCardReaderConstans.MYLOG_PATH_SDCARD_DIR+card + ".jpg");
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
