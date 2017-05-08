@@ -14,17 +14,22 @@ import android.widget.Toast;
 import com.demo.ranger.idreaderdemo.MainActivity;
 import com.demo.ranger.idreaderdemo.service.IDCardConnectService;
 import com.demo.ranger.idreaderdemo.util.ConventerUtil;
+import com.demo.ranger.idreaderdemo.util.GsonUtil;
 import com.demo.ranger.idreaderdemo.util.LogUtil;
+import com.google.gson.Gson;
 import com.ranger.aidl.IDCardInfoData;
 import com.ranger.aidl.IDManager;
 import com.zkteco.android.biometric.core.device.ParameterHelper;
 import com.zkteco.android.biometric.core.device.TransportType;
+import com.zkteco.android.biometric.module.idcard.IDCardReader;
 import com.zkteco.android.biometric.module.idcard.IDCardReaderFactory;
 import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,6 +54,8 @@ public class IDCardReaderServiceTest extends Service{
     private IDCardConnectService connect;
 
     private List<IDCardInfoData> idCardInfoDatas;
+
+    private List<IDCardInfo> idCardInfos;
 
     private IDCardInfo idCardInfo;
 
@@ -98,8 +105,14 @@ public class IDCardReaderServiceTest extends Service{
 
                     if (null!=idCardInfo){
 
-                        ConventerUtil.conventerIDCardInfoData(idCardInfoDatas,idCardInfo);
+                        //ConventerUtil.conventerIDCardInfoData(idCardInfoDatas,idCardInfo);
 
+                        if (null!=idCardInfos){
+                            idCardInfos.add(idCardInfo);
+                        }else {
+                            idCardInfos = new LinkedList<IDCardInfo>();
+                            idCardInfos.add(idCardInfo);
+                        }
 
                     }
 
@@ -130,25 +143,29 @@ public class IDCardReaderServiceTest extends Service{
     private void execute(){
         //发送数据
         try{
-            Iterator<IDCardInfoData> iterator = idCardInfoDatas.iterator();
+            Iterator<IDCardInfo> iterator = idCardInfos.iterator();
+
             if (iterator.hasNext()){
                 while (iterator.hasNext()){
-                    IDCardInfoData data = iterator.next();
+                    IDCardInfo data = iterator.next();
 
-                    String result = idManager.getCheckResult(data);
+                    String info = GsonUtil.toJson(data);
+
+
+                    //String result = idManager.getCheckResult(data);
                     Intent intentForward = new Intent();
+                    intentForward.putExtra("info",info);
 
-                    intentForward.putExtra("name", data.getName());
-                    intentForward.putExtra("id", data.getId());
-                    intentForward.putExtra("count", count);
-                    intentForward.putExtra("photo", data.getPhoto());
-                    intentForward.putExtra("checkResult",result);
+
+//                    intentForward.putExtra("name", data.getName());
+//                    intentForward.putExtra("id", data.getId());
+//                    intentForward.putExtra("count", count);
+//                    intentForward.putExtra("photo", data.getPhoto());
+//                    intentForward.putExtra("checkResult",result);
 
                     intentForward.setAction("android.intent.action.ClientTestService");
                     sendBroadcast(intentForward);
-                    if ("success".equals(result)){
-                        iterator.remove();
-                    }
+                    iterator.remove();
                 }
             }else {
 
@@ -163,9 +180,13 @@ public class IDCardReaderServiceTest extends Service{
                 }
             }
 
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             LogUtil.e(this.getClass().getName(),e);
         }
+
+
+
+
     }
 
 

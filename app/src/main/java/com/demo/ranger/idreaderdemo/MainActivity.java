@@ -37,6 +37,7 @@ import com.google.gson.reflect.TypeToken;
 import com.ranger.aidl.IDManager;
 import com.zkteco.android.IDReader.IDPhotoHelper;
 import com.zkteco.android.IDReader.WLTService;
+import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
@@ -260,7 +261,9 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             try{
                 Bundle bundle = intent.getExtras();
-                String id = bundle.getString("id");
+                String info = bundle.getString("info");
+                IDCardInfo idCardInfo = GsonUtil.jsonToBean(info,IDCardInfo.class);
+                String id = idCardInfo.getId();
                 if (null!=id) {
                     getCartInfo(id);
                     handler = new Handler() {
