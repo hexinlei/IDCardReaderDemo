@@ -19,13 +19,25 @@ public class ResponseData
 	private String   redListLevel;
 	private String   redInfo;
 	private String   extendInfo;
+	private String   listType;
+
 
 	@Override
 	public String toString()
 	{
 		return "ResponseData{" + "status='" + status + '\'' + ", message='" + message + '\'' + ", jobId='" + jobId + '\''
 				+ ", isRedList='" + isRedList + '\'' + ", redListLevel='" + redListLevel + '\'' + ", redInfo='" + redInfo + '\''
-				+ ", extendInfo='" + extendInfo + '\'' + '}';
+				+ ", extendInfo='" + extendInfo + '\'' + ", listType='" + listType + '\'' + '}';
+	}
+
+	public String getListType()
+	{
+		return listType;
+	}
+
+	public void setListType(String listType)
+	{
+		this.listType = listType;
 	}
 
 	public String getStatus()

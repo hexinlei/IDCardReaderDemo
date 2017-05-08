@@ -25,24 +25,24 @@ import android.widget.Toast;
 
 import com.demo.ranger.idreaderdemo.activity.SettingsActivity;
 import com.demo.ranger.idreaderdemo.constans.CheckTypeEnum;
+import com.demo.ranger.idreaderdemo.data.PostCardInfoData;
 import com.demo.ranger.idreaderdemo.data.RequestData;
 import com.demo.ranger.idreaderdemo.data.ResponseData;
 import com.demo.ranger.idreaderdemo.entity.ResultInfoTable;
 import com.demo.ranger.idreaderdemo.service.DBManagerService;
-import com.demo.ranger.idreaderdemo.util.GsonUtil;
-import com.demo.ranger.idreaderdemo.util.LogUtil;
-import com.demo.ranger.idreaderdemo.util.TtsUtil;
+import com.demo.ranger.idreaderdemo.util.*;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ranger.aidl.IDManager;
 import com.zkteco.android.IDReader.IDPhotoHelper;
 import com.zkteco.android.IDReader.WLTService;
-import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 
+import com.zkteco.android.biometric.module.idcard.meta.IDCardInfo;
 import org.xutils.common.Callback;
 import org.xutils.http.RequestParams;
 import org.xutils.x;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.Date;
 
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean mBound = false;
 
+    public static final String GETINFO="getinfo";
+    public static final String POSTCARDINFO="postcardinfo";
 
     //控件
     private TextView number,name,checkResult,countInfo,checkCount,prohibitCount;
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
             checkResult = (TextView) findViewById(R.id.checkResult);
 
             waitingDialog=
-                    new ProgressDialog(MainActivity.this);
+                  new ProgressDialog(MainActivity.this);
             intent = new Intent("android.intent.action.ClientTestService");
 
             receiver=new MyReceiver();
@@ -194,9 +196,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public  void getCartInfo(String id) {
-        RequestParams requestParams = new RequestParams(getUrl());
+        RequestParams requestParams = new RequestParams(getUrl(GETINFO));
+        //RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/person/personTypeQuery");
         final RequestData requestData= new RequestData();
-        requestData.setDeviceCode("7650100100000001");
+        requestData.setDeviceCode("650105FL000001000001");
         requestData.setCardNo(id);
         String json= GsonUtil.toJson(requestData);//上传数据
         requestParams.setAsJsonContent(true);
@@ -207,6 +210,50 @@ public class MainActivity extends AppCompatActivity {
                 Message msg = Message.obtain();
                 msg.obj = result;
                 handler.sendMessage(msg);
+                waitingDialog.dismiss();
+
+            }
+
+            @Override
+            public void onFinished() {
+                //dia.dismiss();//加载完成
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+        });
+    }
+
+    /**
+     * @brief-des:TODO〈上传身份信息〉
+     * @method:
+     * @description:TODO〈上传身份信息〉
+     * @author:
+     * @date:   17/5/8 - 下午11:19
+     * @version: V 1.0
+     * @params:
+     * @modification History:
+     * @17/5/8  ——— version ——— HYBRIS- ———
+     * @Tags:
+     */
+    private void postCardInfo(IDCardInfo idCardInfo,String jobid)
+    {
+        //RequestParams requestParams = new RequestParams(getUrl(POSTCARDINFO));
+        RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/passlog/personLog");
+        PostCardInfoData postCardInfoData = new PostCardInfoData();
+        ConventerUtil.conventerPostIDCardInfoData(postCardInfoData,idCardInfo,jobid);
+        String json= GsonUtil.toJson(postCardInfoData);//上传数据
+        requestParams.setAsJsonContent(true);
+        requestParams.setBodyContent(json);
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+
                 waitingDialog.dismiss();
             }
 
@@ -225,32 +272,40 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private String getUrl()
+    private String getUrl(String type)
     {
         String ip = preferences.getString("pre_reader_server","124.117.209.133");
         String port = preferences.getString("pre_reader_serverport","29092");
-        return "http://"+ip+":"+port+"/verificationInterface/redList/personRedList";
-
+        if (type.equals(GETINFO))
+        {
+            return "http://" + ip + ":" + port + "/verificationInterface/person/personTypeQuery";
+        }else if (type.equals(POSTCARDINFO)){
+            return "http://" + ip + ":" + port + "/verificationInterface/passlog/personLog";
+        }
+        return null;
     }
 
     /**
      * 保存检查结果
      */
     private void saveResult(ResponseData responseData){
-        String status = responseData.getIsRedList();
+        String status = responseData.getListType();
         ResultInfoTable infoTable = new ResultInfoTable();
         switch (status){
-            case "0":
-                infoTable.setCheckType("forbid");
-                infoTable.setCreateTime(new Date());
-                managerService.insert(infoTable);
-                break;
             case "1":
                 infoTable.setCheckType("pass");
                 infoTable.setCreateTime(new Date());
                 managerService.insert(infoTable);
                 break;
             case "2":
+                infoTable.setCheckType("pass");
+                infoTable.setCreateTime(new Date());
+                managerService.insert(infoTable);
+                break;
+            case "3":
+                infoTable.setCheckType("forbid");
+                infoTable.setCreateTime(new Date());
+                managerService.insert(infoTable);
                 break;
         }
     }
@@ -262,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
             try{
                 Bundle bundle = intent.getExtras();
                 String info = bundle.getString("info");
-                IDCardInfo idCardInfo = GsonUtil.jsonToBean(info,IDCardInfo.class);
+                final IDCardInfo idCardInfo = GsonUtil.jsonToBean(info,IDCardInfo.class);
                 String id = idCardInfo.getId();
                 if (null!=id) {
                     getCartInfo(id);
@@ -275,16 +330,16 @@ public class MainActivity extends AppCompatActivity {
                             Type type = new TypeToken<ResponseData>() {
                             }.getType();
                             responseData = gson.fromJson(responseInfo, type);
-                            status = responseData.getIsRedList();
+                            status = responseData.getListType();
                             String msgInfo = responseData.getMessage();
                             String resultMsg = null;
                             LogUtil.e("responseData",responseData.toString());
                             String showSetting = preferences.getString("showSetting","2");
-
                             //保存识别结果
                             saveResult(responseData);
 
-
+                            // TODO: 17/5/8 上传身份信息
+                            postCardInfo(idCardInfo,responseData.getJobId());
 
                             if (showSetting.equals("1")){
                                 //1.原文输出
@@ -307,10 +362,10 @@ public class MainActivity extends AppCompatActivity {
                     };
                 }
 
-                String name = bundle.getString("name");
+                String name = idCardInfo.getName();
                 int counts = bundle.getInt("count");
 
-                byte photo[] = bundle.getByteArray("photo");
+                byte photo[] = idCardInfo.getPhoto();
 
                 Bitmap bitmap = null;
 
@@ -324,11 +379,13 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
+
                 MainActivity.this.number.setText(String.valueOf(counts));
                 MainActivity.this.name.setText(name);
                 MainActivity.this.checkResult.setText(null);
                 if (null != bitmap){
                     MainActivity.this.photo.setImageBitmap(bitmap);
+                    WriterFileUtil.saveBitmap(bitmap,id);
                     MainActivity.this.photo.setVisibility(View.VISIBLE);
                 }else {
                     MainActivity.this.photo.setVisibility(View.INVISIBLE);
@@ -340,6 +397,35 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void postBitMap(Bitmap bitmap)
+    {
+        RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/passlog/personLog");
+
+        requestParams.addBodyParameter("status","1");
+        requestParams.addBodyParameter("FilePath", new File("123123"));
+
+        x.http().post(requestParams, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+
+                waitingDialog.dismiss();
+            }
+
+            @Override
+            public void onFinished() {
+                //dia.dismiss();//加载完成
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+            }
+        });
     }
 
 
