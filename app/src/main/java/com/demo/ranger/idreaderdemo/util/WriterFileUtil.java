@@ -51,7 +51,7 @@ public class WriterFileUtil {
         }
     }
     /** 保存方法 */
-    public static  void saveBitmap(Bitmap bm,String card) {
+    public static File saveBitmap(Bitmap bm,String card) {
         File f = new File( IDCardReaderConstans.MYLOG_PATH_SDCARD_DIR+card + ".jpg");
         FileOutputStream fOut = null;
         try {
@@ -70,5 +70,6 @@ public class WriterFileUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return f;
     }
 }

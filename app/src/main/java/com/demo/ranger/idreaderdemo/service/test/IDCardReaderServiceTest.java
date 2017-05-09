@@ -45,7 +45,7 @@ public class IDCardReaderServiceTest extends Service{
 
     private boolean threadDisabe = false;
 
-    private long times = 1000;
+    private long times = 3000;
 
     private int count = 0;
 
@@ -102,22 +102,22 @@ public class IDCardReaderServiceTest extends Service{
                     }
 
                     idCardInfo = connect.getIDCardInfo();
-
-                    if (null!=idCardInfo){
-
-                        //ConventerUtil.conventerIDCardInfoData(idCardInfoDatas,idCardInfo);
-
-                        if (null!=idCardInfos){
-                            idCardInfos.add(idCardInfo);
-                        }else {
-                            idCardInfos = new LinkedList<IDCardInfo>();
-                            idCardInfos.add(idCardInfo);
-                        }
-
-                    }
-
-                    execute();
-                    count++;
+                    execute(idCardInfo);
+//                    if (null!=idCardInfo){
+//
+//                        //ConventerUtil.conventerIDCardInfoData(idCardInfoDatas,idCardInfo);
+//
+//                        if (null!=idCardInfos){
+//                            idCardInfos.add(idCardInfo);
+//                        }else {
+//                            idCardInfos = new LinkedList<IDCardInfo>();
+//                            idCardInfos.add(idCardInfo);
+//                        }
+//
+//                    }
+//
+//                    execute();
+//                    count++;
                 }
             }
         }).start();
@@ -160,7 +160,7 @@ public class IDCardReaderServiceTest extends Service{
                     iterator.remove();
                 }
             }else {
-                if (timesRefash>6){
+                if (timesRefash>2){
                     Intent intentForward = new Intent();
                     intentForward.putExtra("status","fail");
                     intentForward.setAction("android.intent.action.ClientTestService");
@@ -174,10 +174,37 @@ public class IDCardReaderServiceTest extends Service{
         } catch (Exception e) {
             LogUtil.e(this.getClass().getName(),e);
         }
+    }
 
 
 
+    private void execute(IDCardInfo idCardInfo){
+        //发送数据
 
+        if (null!=idCardInfo){
+            String info = GsonUtil.toJson(idCardInfo);
+            Intent intentForward = new Intent();
+            intentForward.putExtra("info",info);
+            intentForward.putExtra("status","success");
+            intentForward.setAction("android.intent.action.ClientTestService");
+            sendBroadcast(intentForward);
+        }else {
+//            Intent intentForward = new Intent();
+//            intentForward.putExtra("status","fail");
+//            intentForward.setAction("android.intent.action.ClientTestService");
+//            timesRefash = 0;
+//            sendBroadcast(intentForward);
+
+            if (timesRefash>1){
+                Intent intentForward = new Intent();
+                intentForward.putExtra("status","fail");
+                intentForward.setAction("android.intent.action.ClientTestService");
+                timesRefash = 0;
+                sendBroadcast(intentForward);
+            }else {
+                timesRefash++;
+            }
+        }
     }
 
 

@@ -106,9 +106,6 @@ public class MainActivity extends AppCompatActivity {
             "android.permission.READ_EXTERNAL_STORAGE",
             "android.permission.WRITE_EXTERNAL_STORAGE" };
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try{
@@ -335,7 +332,7 @@ public class MainActivity extends AppCompatActivity {
                 if ("success".equals(statusResult)){
                     String info = bundle.getString("info");
                     final IDCardInfo idCardInfo = GsonUtil.jsonToBean(info, IDCardInfo.class);
-                    String id = idCardInfo.getId();
+                    final String id = idCardInfo.getId();
 
                     if (null!=id) {
                         getCartInfo(id);
@@ -355,14 +352,38 @@ public class MainActivity extends AppCompatActivity {
                                 String showSetting = preferences.getString("showSetting","2");
                                 //保存识别结果
                                 //saveResult(responseData);
-                                createStyle(styleData,status);
+                                createStyle(styleData, status);
                                 MainActivity.this.resultText.setText(styleData.getTextValue());
                                 MainActivity.this.resultText.setTextColor(android.graphics.Color.parseColor(styleData.getTextColor()));
                                 MainActivity.this.resultPhoto.setImageResource(styleData.getImagePath());
+                                MainActivity.this.resultPhoto.setVisibility(View.VISIBLE);
 
+                                // TODO: 2017/5/9 添加页面展示
+                                byte photo[] = idCardInfo.getPhoto();
 
+                                Bitmap bitmap = null;
 
+                                if (null!= photo){
 
+                                    byte[] buf = new byte[WLTService.imgLength];
+
+                                    if(1 == WLTService.wlt2Bmp(photo, buf))
+                                    {
+                                        bitmap = IDPhotoHelper.Bgr2Bitmap(buf);
+                                    }
+
+                                }
+                                if (null != bitmap){
+                                    MainActivity.this.photo.setImageBitmap(bitmap);
+                                    try {
+                                        postBitMap(WriterFileUtil.saveBitmap(bitmap, id));
+                                    }catch (Exception e){
+                                        LogUtil.e("error",e);
+                                    }
+                                    MainActivity.this.photo.setVisibility(View.VISIBLE);
+                                }else {
+                                    MainActivity.this.photo.setVisibility(View.INVISIBLE);
+                                }
 
 
                                 // TODO: 17/5/8 上传身份信息
@@ -384,45 +405,13 @@ public class MainActivity extends AppCompatActivity {
 //                            }
 //
 //                            MainActivity.this.checkResult.setText(resultMsg);
-
-
-
-
-
-
                             }
                         };
-                    }
-
-                    // TODO: 2017/5/9 添加页面展示
-                    byte photo[] = idCardInfo.getPhoto();
-
-                    Bitmap bitmap = null;
-
-                    if (null!= photo){
-
-                        byte[] buf = new byte[WLTService.imgLength];
-
-                        if(1 == WLTService.wlt2Bmp(photo, buf))
-                        {
-                            bitmap = IDPhotoHelper.Bgr2Bitmap(buf);
-                        }
-
-                    }
-                    if (null != bitmap){
-                        MainActivity.this.photo.setImageBitmap(bitmap);
-                        try {
-                            WriterFileUtil.saveBitmap(bitmap, id);
-                        }catch (Exception e){
-                            LogUtil.e("error",e);
-                        }
-                        MainActivity.this.photo.setVisibility(View.VISIBLE);
-                    }else {
-                        MainActivity.this.photo.setVisibility(View.INVISIBLE);
                     }
                 }else if ("fail".equals(statusResult)){
                     MainActivity.this.photo.setImageResource(R.drawable.default_photo);
                     MainActivity.this.photo.setVisibility(View.VISIBLE);
+                    MainActivity.this.resultPhoto.setVisibility(View.INVISIBLE);
                     createStyle(styleData, "0");
                     MainActivity.this.resultText.setText(styleData.getTextValue());
                     MainActivity.this.resultText.setTextColor(android.graphics.Color.parseColor(styleData.getTextColor()));
@@ -437,16 +426,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void postBitMap(Bitmap bitmap) {
+    private void postBitMap(File file) {
         RequestParams requestParams = new RequestParams("http://124.117.209.133:29092/verificationInterface/passlog/personLog");
 
         requestParams.addBodyParameter("status", "1");
-        requestParams.addBodyParameter("FilePath", new File("123123"));
+        requestParams.addBodyParameter("FilePath", file);
 
         x.http().post(requestParams, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
-
+                Toast.makeText(getApplicationContext(),"图片上传成功",Toast.LENGTH_SHORT).show();
                 waitingDialog.dismiss();
             }
 
@@ -461,6 +450,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
+                Toast.makeText(getApplicationContext(),"图片上传失败",Toast.LENGTH_SHORT).show();
             }
         });
     }
