@@ -62,6 +62,18 @@ public enum CheckTypeEnum {
     }
 
 
+    /**
+     * 最近接口对应结果
+     */
+    public static Map<String,String> resultMap = new HashMap<>();
+    static {
+        resultMap.put("1","安检");
+        resultMap.put("2","快速安检");
+        resultMap.put("3","请联系工作人员");
+        resultMap.put("0","请配合安检");
+    }
+
+
 
 
 

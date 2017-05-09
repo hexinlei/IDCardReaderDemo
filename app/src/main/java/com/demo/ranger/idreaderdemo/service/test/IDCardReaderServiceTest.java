@@ -151,27 +151,18 @@ public class IDCardReaderServiceTest extends Service{
 
                     String info = GsonUtil.toJson(data);
 
-
                     //String result = idManager.getCheckResult(data);
                     Intent intentForward = new Intent();
                     intentForward.putExtra("info",info);
-
-
-//                    intentForward.putExtra("name", data.getName());
-//                    intentForward.putExtra("id", data.getId());
-//                    intentForward.putExtra("count", count);
-//                    intentForward.putExtra("photo", data.getPhoto());
-//                    intentForward.putExtra("checkResult",result);
-
+                    intentForward.putExtra("status","success");
                     intentForward.setAction("android.intent.action.ClientTestService");
                     sendBroadcast(intentForward);
                     iterator.remove();
                 }
             }else {
-
-                if (timesRefash>10){
+                if (timesRefash>6){
                     Intent intentForward = new Intent();
-                    intentForward.putExtra("name", "无数据");
+                    intentForward.putExtra("status","fail");
                     intentForward.setAction("android.intent.action.ClientTestService");
                     timesRefash = 0;
                     sendBroadcast(intentForward);
